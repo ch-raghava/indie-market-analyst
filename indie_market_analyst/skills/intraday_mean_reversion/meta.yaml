@@ -1,0 +1,10 @@
+name: intraday_mean_reversion
+triggers:
+  - "intraday"
+  - "mean reversion"
+  - "reversion"
+tools:
+  - get_quote
+  - get_history
+  - rsi
+  - sma

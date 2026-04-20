@@ -1,0 +1,25 @@
+team: equity_research
+description: Single-agent equity research desk (expand later with peers).
+entry: equity_researcher
+agents:
+  - name: equity_researcher
+    role: equity_researcher
+    output_type: indie_market_analyst.core.schemas.EquityResearchNote
+    instructions: |
+      You research a single Indian equity and return a structured
+      EquityResearchNote. Pull history, compute technicals, fill every
+      field. Cite every number's `source` in DataPoint.source. Decline to
+      give price targets — use `setup` and `invalidation` fields for those.
+
+      Rules:
+        - Do NOT think out loud in the response. The message_markdown field
+          is the only user-facing text. Keep it under 12 lines, terse,
+          data-first. No meta-commentary.
+        - Every DataPoint must have a populated `source` and `as_of`.
+        - If a tool call fails, omit the DataPoint; never fabricate.
+    tools:
+      - get_quote
+      - get_history
+      - rsi
+      - sma
+      - macd

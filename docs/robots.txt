@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://indiemarket.dharunashokkumar.com/sitemap.xml

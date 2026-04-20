@@ -1,0 +1,64 @@
+<svg width="800" height="400" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#666" />
+    </marker>
+  </defs>
+
+  <!-- Boxes -->
+  <g transform="translate(40, 50)">
+    <rect width="120" height="60" rx="8" fill="#6aa7ff" fill-opacity="0.1" stroke="#2c6cdb" stroke-width="2" />
+    <text x="60" y="35" font-family="Inter, sans-serif" font-size="14" font-weight="600" text-anchor="middle" fill="#1a1a1a">Frontend</text>
+  </g>
+
+  <g transform="translate(200, 50)">
+    <rect width="120" height="60" rx="8" fill="#6aa7ff" fill-opacity="0.1" stroke="#2c6cdb" stroke-width="2" />
+    <text x="60" y="35" font-family="Inter, sans-serif" font-size="14" font-weight="600" text-anchor="middle" fill="#1a1a1a">FastAPI SSE</text>
+  </g>
+
+  <g transform="translate(360, 50)">
+    <rect width="120" height="60" rx="8" fill="#6aa7ff" fill-opacity="0.1" stroke="#2c6cdb" stroke-width="2" />
+    <text x="60" y="35" font-family="Inter, sans-serif" font-size="14" font-weight="600" text-anchor="middle" fill="#1a1a1a">Orchestrator</text>
+  </g>
+
+  <g transform="translate(520, 50)">
+    <rect width="120" height="120" rx="8" fill="#faf9f5" stroke="#e2e1db" stroke-width="2" stroke-dasharray="4" />
+    <text x="60" y="30" font-family="Inter, sans-serif" font-size="13" font-weight="600" text-anchor="middle" fill="#666">SWARM (YAML)</text>
+    
+    <g transform="translate(20, 50)">
+      <rect width="80" height="40" rx="4" fill="white" stroke="#2c6cdb" stroke-width="1" />
+      <text x="40" y="25" font-family="Inter, sans-serif" font-size="12" text-anchor="middle" fill="#1a1a1a">Agents</text>
+    </g>
+  </g>
+
+  <g transform="translate(680, 80)">
+    <rect width="100" height="60" rx="8" fill="#f1f0eb" stroke="#666" stroke-width="1" />
+    <text x="50" y="35" font-family="Inter, sans-serif" font-size="13" font-weight="600" text-anchor="middle" fill="#1a1a1a">Tools</text>
+  </g>
+
+  <g transform="translate(580, 240)">
+    <rect width="140" height="100" rx="8" fill="#f1f0eb" stroke="#666" stroke-width="1" />
+    <text x="70" y="30" font-family="Inter, sans-serif" font-size="13" font-weight="600" text-anchor="middle" fill="#1a1a1a">Data Sources</text>
+    <text x="70" y="60" font-family="Inter, sans-serif" font-size="11" text-anchor="middle" fill="#666">yfinance</text>
+    <text x="70" y="75" font-family="Inter, sans-serif" font-size="11" text-anchor="middle" fill="#666">NSE/BSE Public</text>
+    <text x="70" y="90" font-family="Inter, sans-serif" font-size="11" text-anchor="middle" fill="#666">Google Finance</text>
+  </g>
+
+  <g transform="translate(350, 240)">
+    <rect width="160" height="100" rx="8" fill="#2c6cdb" fill-opacity="0.05" stroke="#2c6cdb" stroke-width="2" />
+    <text x="80" y="40" font-family="Inter, sans-serif" font-size="13" font-weight="600" text-anchor="middle" fill="#1a1a1a">Deterministic</text>
+    <text x="80" y="60" font-family="Inter, sans-serif" font-size="13" font-weight="600" text-anchor="middle" fill="#1a1a1a">Backtester</text>
+    <text x="80" y="85" font-family="Inter, sans-serif" font-size="11" text-anchor="middle" fill="#666">Indian Cost Model</text>
+  </g>
+
+  <!-- Arrows -->
+  <line x1="160" y1="80" x2="190" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrowhead)" />
+  <line x1="320" y1="80" x2="350" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrowhead)" />
+  <line x1="480" y1="80" x2="510" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrowhead)" />
+  <line x1="640" y1="110" x2="670" y2="110" stroke="#666" stroke-width="1.5" marker-end="url(#arrowhead)" />
+  
+  <!-- Tool connections -->
+  <path d="M730 140 L730 230" fill="none" stroke="#666" stroke-width="1.5" marker-end="url(#arrowhead)" stroke-dasharray="4" />
+  <path d="M680 110 L430 110 L430 230" fill="none" stroke="#666" stroke-width="1.5" marker-end="url(#arrowhead)" stroke-dasharray="4" />
+
+</svg>

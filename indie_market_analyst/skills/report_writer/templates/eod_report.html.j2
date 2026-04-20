@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{{ title }}</title>
+  <style>
+    @page { size: A4; margin: 18mm 16mm; }
+    body { font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; color: #111; font-size: 11pt; line-height: 1.45; }
+    h1 { font-size: 18pt; margin: 0 0 4pt; }
+    h2 { font-size: 13pt; margin: 16pt 0 6pt; border-bottom: 1px solid #ccc; padding-bottom: 2pt; }
+    .meta { color: #666; font-size: 9pt; margin-bottom: 14pt; }
+    table { width: 100%; border-collapse: collapse; font-size: 10pt; }
+    th, td { text-align: left; padding: 4pt 6pt; border-bottom: 1px solid #eee; }
+    th { background: #f6f6f6; }
+    .chart { margin: 8pt 0 16pt; }
+    .chart img { max-width: 100%; border: 1px solid #eee; }
+    .chart .cap { font-size: 9pt; color: #666; }
+    .disclaimer { margin-top: 24pt; font-size: 8.5pt; color: #888; border-top: 1px solid #eee; padding-top: 6pt; }
+    .summary { white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>{{ title }}</h1>
+  <div class="meta">Generated {{ generated_at }} &middot; INDIE_MARKET_ANALYST</div>
+
+  <h2>Summary</h2>
+  <div class="summary">{{ summary_md }}</div>
+
+  {% if facts %}
+  <h2>Verified Facts</h2>
+  <table>
+    <thead><tr><th>Metric</th><th>Value</th><th>Source</th></tr></thead>
+    <tbody>
+    {% for f in facts %}
+      <tr><td>{{ f.label }}</td><td>{{ f.value }}</td><td>{{ f.source }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+
+  {% if calculations %}
+  <h2>Calculations</h2>
+  <table>
+    <thead><tr><th>Name</th><th>Value</th><th>Unit</th></tr></thead>
+    <tbody>
+    {% for c in calculations %}
+      <tr><td>{{ c.name }}</td><td>{{ c.value }}</td><td>{{ c.unit }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+
+  {% if charts %}
+  <h2>Charts</h2>
+  {% for ch in charts %}
+    <div class="chart">
+      <img src="file://{{ ch.path }}" alt="{{ ch.symbol }}">
+      <div class="cap">{{ ch.symbol }}</div>
+    </div>
+  {% endfor %}
+  {% endif %}
+
+  <div class="disclaimer">{{ disclaimer }}</div>
+</body>
+</html>

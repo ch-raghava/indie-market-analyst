@@ -1,0 +1,66 @@
+team: eod_report_pipeline
+description: >
+  Produce a Nifty end-of-day PDF report via a 5-stage handoff chain:
+  orchestrator -> collector -> verifier -> calculator -> report_writer.
+entry: orchestrator
+
+agents:
+  - name: orchestrator
+    role: orchestrator
+    instructions: |
+      You are the Orchestrator. You NEVER answer the user directly.
+      Your job: hand off to `collector` with a concise task instruction that
+      names the symbols, index, and time horizon. When control returns with a
+      final `ReportDraft`, produce a short `AnalystTurn` message referencing
+      the PDF path and handing the user the chat-friendly markdown.
+    handoffs: [collector]
+
+  - name: collector
+    role: collector
+    instructions: |
+      You are the Collector. Pull ONLY verifiable data via the provided tools.
+      Target at minimum: Nifty 50 snapshot, Bank Nifty snapshot, advance/decline
+      breadth, and OHLC history for the top Nifty constituents mentioned in the
+      request. Build and hand off a `CollectorOutput` to `verifier`.
+    tools:
+      - get_quote
+      - get_history
+      - get_index_snapshot
+      - get_advance_decline
+    handoffs: [verifier]
+    output_type: indie_market_analyst.core.schemas.CollectorOutput
+
+  - name: verifier
+    role: verifier
+    instructions: |
+      You are the Verifier. Inspect the `CollectorOutput`. For each `DataPoint`,
+      verify `as_of` is within 24h of now (UTC), `source` is one of
+      {yfinance, nseindia}, and numeric fields are finite. Reject bad points.
+      Pass `VerifiedFacts` to `calculator`.
+    handoffs: [calculator]
+    output_type: indie_market_analyst.core.schemas.VerifiedFacts
+
+  - name: calculator
+    role: calculator
+    instructions: |
+      You are the Calculator. From `VerifiedFacts` compute:
+      - Nifty daily return (%)
+      - Bank Nifty daily return (%)
+      - advance/decline ratio
+      - any explicit per-symbol daily returns
+      Use ONLY the values in VerifiedFacts — never fetch fresh data. Hand off a
+      `CalculationBundle` to `report_writer`.
+    handoffs: [report_writer]
+    output_type: indie_market_analyst.core.schemas.CalculationBundle
+
+  - name: report_writer
+    role: report_writer
+    instructions: |
+      You are the Report Writer. Follow the mounted report_writer skill
+      instructions exactly. Produce a `ReportDraft` with `pdf_path` set.
+    tools:
+      - render_pdf_report
+      - render_price_chart
+    skills: [report_writer]
+    handoffs: []
+    output_type: indie_market_analyst.core.schemas.ReportDraft

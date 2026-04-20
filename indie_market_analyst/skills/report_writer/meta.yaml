@@ -1,0 +1,11 @@
+name: report_writer
+triggers:
+  - "end of day"
+  - "eod report"
+  - "market report"
+  - "daily report"
+  - "generate pdf"
+tools:
+  - render_pdf_report
+  - render_price_chart
+output_type: indie_market_analyst.core.schemas.ReportDraft
