@@ -374,9 +374,79 @@ pre {
 }
 .message.assistant .bubble h2 { font-size: 17px; }
 .message.assistant .bubble h3 { font-size: 15px; }
-.message.assistant .bubble ul { padding-left: 22px; }
+.message.assistant .bubble ul,
+.message.assistant .bubble ol { padding-left: 22px; }
 .message.assistant .bubble li { margin: 2px 0; }
 .message.assistant .bubble strong { font-weight: 600; }
+.message.assistant .bubble em { font-style: italic; }
+.message.assistant .bubble a {
+  color: var(--accent, #2b6cb0);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.message.assistant .bubble hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 14px 0;
+}
+.message.assistant .bubble blockquote {
+  margin: 10px 0;
+  padding: 6px 12px;
+  border-left: 3px solid var(--border);
+  color: var(--text-muted);
+  background: var(--surface);
+  border-radius: 4px;
+}
+.message.assistant .bubble code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px;
+  padding: 1px 5px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+.message.assistant .bubble pre {
+  margin: 10px 0;
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.message.assistant .bubble pre code {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+.message.assistant .bubble table {
+  width: 100%;
+  margin: 12px 0;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  font-family: var(--font-sans);
+}
+.message.assistant .bubble thead th {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.message.assistant .bubble tbody td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.message.assistant .bubble tbody tr:last-child td { border-bottom: 0; }
+.message.assistant .bubble tbody tr:hover { background: var(--surface); }
 
 /* ---------- thinking drawer ---------- */
 

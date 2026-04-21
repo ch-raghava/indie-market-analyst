@@ -76,9 +76,7 @@ export function ChatPage() {
             });
           } else if (ev.kind === "tool_call_end") {
             const d = ev.data;
-            if (d.call_id) {
-              endToolCall(assistantId, d.call_id, d.result, d.duration_ms);
-            }
+            endToolCall(assistantId, d.call_id ?? null, d.result, d.duration_ms);
             setActiveTool(null);
           } else if (ev.kind === "handoff") {
             const d = ev.data;

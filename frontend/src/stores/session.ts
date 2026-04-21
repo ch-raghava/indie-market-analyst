@@ -49,7 +49,7 @@ type State = {
   startToolCall: (id: string, call: ToolCall) => void;
   endToolCall: (
     id: string,
-    call_id: string,
+    call_id: string | null,
     result: unknown,
     duration_ms: number | null
   ) => void;
@@ -138,11 +138,16 @@ export const useSession = create<State>((set, get) => ({
     set({
       messages: get().messages.map((m) => {
         if (m.id !== id) return m;
-        const calls = (m.toolCalls || []).map((c) =>
-          c.call_id === call_id
-            ? { ...c, result, duration_ms, status: "done" as const }
-            : c
-        );
+        const calls = (m.toolCalls || []).slice();
+        let idx = call_id ? calls.findIndex((c) => c.call_id === call_id) : -1;
+        if (idx < 0) {
+          for (let i = calls.length - 1; i >= 0; i--) {
+            if (calls[i].status === "running") { idx = i; break; }
+          }
+        }
+        if (idx >= 0) {
+          calls[idx] = { ...calls[idx], result, duration_ms, status: "done" };
+        }
         return { ...m, toolCalls: calls };
       }),
     }),

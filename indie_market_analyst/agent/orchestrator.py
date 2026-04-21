@@ -216,7 +216,12 @@ def _agent_name(item: Any) -> str | None:
 
 def _tool_called_fields(item: Any) -> tuple[str | None, str | None, dict[str, Any]]:
     raw = getattr(item, "raw_item", item)
-    cid = getattr(raw, "call_id", None) or getattr(raw, "id", None)
+    cid = (
+        getattr(raw, "call_id", None)
+        or getattr(item, "call_id", None)
+        or getattr(raw, "id", None)
+        or getattr(item, "id", None)
+    )
     name = getattr(raw, "name", None) or getattr(raw, "tool_name", None)
     args_raw = getattr(raw, "arguments", None)
     args: dict[str, Any] = {}
@@ -235,7 +240,14 @@ def _tool_called_fields(item: Any) -> tuple[str | None, str | None, dict[str, An
 
 def _tool_output_fields(item: Any) -> tuple[str | None, str | None, Any]:
     raw = getattr(item, "raw_item", item)
-    cid = getattr(raw, "call_id", None) or getattr(raw, "id", None)
+    cid = (
+        getattr(raw, "call_id", None)
+        or getattr(item, "call_id", None)
+        or getattr(raw, "tool_call_id", None)
+        or getattr(item, "tool_call_id", None)
+    )
+    if isinstance(raw, dict):
+        cid = cid or raw.get("call_id") or raw.get("tool_call_id")
     name = getattr(raw, "name", None) or getattr(raw, "tool_name", None)
     output = getattr(item, "output", None)
     if output is None:
