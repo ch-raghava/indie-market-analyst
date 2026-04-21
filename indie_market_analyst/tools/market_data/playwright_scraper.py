@@ -32,6 +32,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
+from urllib.parse import urlsplit
 
 from agents import function_tool
 from pydantic import BaseModel, ConfigDict, Field
@@ -50,16 +51,39 @@ log = logging.getLogger(__name__)
 # Config
 # ---------------------------------------------------------------------------
 
-_UAS: tuple[str, ...] = (
+# Pinned to one desktop Chrome identity so client hints (sec-ch-ua et al.)
+# match exactly — Akamai's bot score rejects UA/hint mismatches.
+_UA = (
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
-    "Chrome/124.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_5) AppleWebKit/605.1.15 "
-    "(KHTML, like Gecko) Version/17.0 Safari/605.1.15",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-    "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 "
-    "(KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
+    "Chrome/124.0.0.0 Safari/537.36"
 )
+_SEC_CH_UA = '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"'
+
+_EXTRA_HEADERS: dict[str, str] = {
+    "sec-ch-ua": _SEC_CH_UA,
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": '"Linux"',
+    "Sec-Fetch-Site": "none",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-User": "?1",
+    "Sec-Fetch-Dest": "document",
+    "Upgrade-Insecure-Requests": "1",
+    "Accept-Language": "en-IN,en;q=0.9",
+}
+
+# Runs on every document in the context, before any site script.
+_INIT_SCRIPT = """
+Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+Object.defineProperty(navigator, 'languages', { get: () => ['en-IN','en-US','en'] });
+Object.defineProperty(navigator, 'plugins', {
+  get: () => [
+    { name: 'Chrome PDF Plugin', filename: 'internal-pdf-viewer', description: 'PDF' },
+    { name: 'Chrome PDF Viewer', filename: 'mhjfbmdgcfjbbpaeojofohoefgiehjai', description: '' },
+    { name: 'Native Client', filename: 'internal-nacl-plugin', description: '' },
+  ],
+});
+window.chrome = window.chrome || { runtime: {} };
+"""
 
 _BLOCK_RESOURCES = {"image", "media", "font", "stylesheet"}
 _NAV_TIMEOUT_MS = 15_000
@@ -72,12 +96,15 @@ _BACKOFF_BASE_S = 1.5
 _CACHE_TAG_PREFIX = "scrape_cache:"
 
 
-@dataclass
+@dataclass(frozen=True)
 class SiteSpec:
     """Per-site scraping contract.
 
     ``list_url`` is where we look for fresh links.
-    ``link_selector`` yields ``<a href>`` elements on the list page.
+    ``link_pattern`` is a compiled regex applied to every absolutized
+    ``<a href>`` on the list page — only URLs that match are kept as
+    article candidates. URL shape is stabler than DOM structure across
+    site redesigns.
     ``body_selectors`` are tried in order on each article page — the first
     non-empty wins. A final generic fallback (``article``, ``[itemprop=articleBody]``)
     is always tried so a broken site-specific selector degrades, not crashes.
@@ -86,7 +113,7 @@ class SiteSpec:
     key: str
     label: str
     list_url: str
-    link_selector: str
+    link_pattern: re.Pattern[str]
     body_selectors: tuple[str, ...]
     link_prefix: str = ""
 
@@ -96,25 +123,37 @@ SITES: dict[str, SiteSpec] = {
         key="moneycontrol",
         label="Moneycontrol",
         list_url="https://www.moneycontrol.com/news/business/markets/",
-        link_selector="li.clearfix h2 a, .news_row h2 a",
+        link_pattern=re.compile(
+            r"^https?://(?:www\.)?moneycontrol\.com/news/[\w/-]+-\d+\.html$",
+            re.IGNORECASE,
+        ),
         body_selectors=(".content_wrapper .arti-flow", "div#contentdata", ".arti-flow"),
+        link_prefix="https://www.moneycontrol.com",
     ),
     "livemint": SiteSpec(
         key="livemint",
         label="Livemint",
         list_url="https://www.livemint.com/market",
-        link_selector="a.imgSec, h2.headline a, h3 a",
+        link_pattern=re.compile(
+            r"^https?://(?:www\.)?livemint\.com/(?:market|economy|companies|news|money)/"
+            r"[\w./-]+-\d{10,}\.html$",
+            re.IGNORECASE,
+        ),
         body_selectors=(
             "div.storyParagraph",
             "[itemprop='articleBody']",
             "div.mainArea",
         ),
+        link_prefix="https://www.livemint.com",
     ),
     "economictimes": SiteSpec(
         key="economictimes",
         label="Economic Times",
         list_url="https://economictimes.indiatimes.com/markets",
-        link_selector="h3 a, h2 a, .eachStory a",
+        link_pattern=re.compile(
+            r"^https?://economictimes\.indiatimes\.com/[\w/-]+/articleshow/\d+\.cms(?:\?.*)?$",
+            re.IGNORECASE,
+        ),
         body_selectors=(".artText", "[itemprop='articleBody']", ".article_content"),
         link_prefix="https://economictimes.indiatimes.com",
     ),
@@ -122,15 +161,27 @@ SITES: dict[str, SiteSpec] = {
         key="businessstandard",
         label="Business Standard",
         list_url="https://www.business-standard.com/markets",
-        link_selector="a.smallcard-title, h2 a, h3 a",
+        link_pattern=re.compile(
+            r"^https?://(?:www\.)?business-standard\.com/"
+            r"(?:markets|economy|companies|industry|finance|article)/"
+            r"[\w./-]+-\d{6,}[\w._-]*\.html$",
+            re.IGNORECASE,
+        ),
         body_selectors=(".storycontent", ".article-content", "[itemprop='articleBody']"),
         link_prefix="https://www.business-standard.com",
     ),
     "ndtvprofit": SiteSpec(
         key="ndtvprofit",
         label="NDTV Profit",
-        list_url="https://www.ndtvprofit.com/markets",
-        link_selector="h3 a, h2 a, a.story-card-link",
+        # /markets is a section index with no article cards; /markets/stocks
+        # is the live article feed.
+        list_url="https://www.ndtvprofit.com/markets/stocks",
+        link_pattern=re.compile(
+            r"^https?://(?:www\.)?ndtvprofit\.com/"
+            r"(?:markets|business|economy|india|world|research-reports)/"
+            r"[\w-]+-\d{6,}$",
+            re.IGNORECASE,
+        ),
         body_selectors=("[itemprop='articleBody']", "article", ".story-element-text"),
         link_prefix="https://www.ndtvprofit.com",
     ),
@@ -157,6 +208,13 @@ def _rate_limit(host: str, gap: float = _PER_DOMAIN_GAP_S) -> None:
 def _host_of(url: str) -> str:
     m = re.match(r"https?://([^/]+)", url)
     return m.group(1).lower() if m else url
+
+
+def _origin_of(url: str) -> str:
+    parts = urlsplit(url)
+    if not parts.scheme or not parts.netloc:
+        return ""
+    return f"{parts.scheme}://{parts.netloc}"
 
 
 # ---------------------------------------------------------------------------
@@ -204,10 +262,28 @@ class _BrowserCtx:
     page: Any
     pw: Any
     errors: list[str] = field(default_factory=list)
+    warmed_hosts: set[str] = field(default_factory=set)
+
+
+def _warm_up(ctx: _BrowserCtx, url: str) -> None:
+    """Visit the site's root once per browser session so Akamai sets
+    cookies (``_abck`` / ``bm_sz``). The subsequent section/article goto
+    then looks like a human's second click. Best-effort — failures are
+    logged but don't raise.
+    """
+    origin = _origin_of(url)
+    if not origin or origin in ctx.warmed_hosts:
+        return
+    try:
+        ctx.page.goto(origin, wait_until="domcontentloaded")
+        time.sleep(random.uniform(0.8, 1.6))
+    except Exception as e:
+        log.info("warm_up failed for %s: %s", origin, e)
+    ctx.warmed_hosts.add(origin)
 
 
 @contextmanager
-def _browser(user_agent: str | None = None):
+def _browser():
     try:
         from playwright.sync_api import sync_playwright
     except ImportError as e:
@@ -215,7 +291,6 @@ def _browser(user_agent: str | None = None):
             "playwright not installed. Run: uv sync && uv run playwright install chromium"
         ) from e
 
-    ua = user_agent or random.choice(_UAS)
     pw = sync_playwright().start()
     browser = None
     try:
@@ -228,12 +303,15 @@ def _browser(user_agent: str | None = None):
             ],
         )
         context = browser.new_context(
-            user_agent=ua,
+            user_agent=_UA,
             viewport={"width": 1366, "height": 900},
             locale="en-IN",
             timezone_id="Asia/Kolkata",
             java_script_enabled=True,
+            extra_http_headers=_EXTRA_HEADERS,
         )
+        # Must register before any new_page() so it runs on every document.
+        context.add_init_script(_INIT_SCRIPT)
         context.set_default_navigation_timeout(_NAV_TIMEOUT_MS)
         context.set_default_timeout(_NAV_TIMEOUT_MS)
 
@@ -313,34 +391,38 @@ def _extract_body(page: Any, selectors: tuple[str, ...]) -> str:
         return ""
 
 
-def _scrape_list(page: Any, spec: SiteSpec, limit: int) -> list[str]:
+def _scrape_list(ctx: _BrowserCtx, spec: SiteSpec, limit: int) -> list[str]:
+    _warm_up(ctx, spec.list_url)
+    page = ctx.page
     page.goto(spec.list_url, wait_until="domcontentloaded")
     try:
-        page.wait_for_selector(spec.link_selector, timeout=6000)
+        page.wait_for_load_state("networkidle", timeout=4000)
     except Exception:
         pass
-    hrefs: list[str] = []
     try:
-        elements = page.query_selector_all(spec.link_selector)
+        elements = page.query_selector_all("a")
     except Exception:
         elements = []
-    for el in elements[: limit * 3]:  # oversample; many will be nav/promos
+    hrefs: list[str] = []
+    seen: set[str] = set()
+    for el in elements:
         try:
             href = el.get_attribute("href") or ""
         except Exception:
             continue
         href = _absolutize(href.strip(), spec.link_prefix)
-        if not href or "#" in href.split("/")[-1]:
+        if not href or href in seen:
             continue
-        if href in hrefs:
+        if not spec.link_pattern.search(href):
             continue
+        seen.add(href)
         hrefs.append(href)
         if len(hrefs) >= limit:
             break
     return hrefs
 
 
-def _scrape_article(page: Any, spec: SiteSpec, url: str) -> NewsItem | None:
+def _scrape_article(ctx: _BrowserCtx, spec: SiteSpec, url: str) -> NewsItem | None:
     _rate_limit(_host_of(url))
     cache_k = _cache_key("article", url)
     hit = _cache_get(cache_k)
@@ -350,6 +432,8 @@ def _scrape_article(page: Any, spec: SiteSpec, url: str) -> NewsItem | None:
         except Exception:
             pass
 
+    _warm_up(ctx, url)
+    page = ctx.page
     page.goto(url, wait_until="domcontentloaded")
     title = ""
     try:
@@ -420,7 +504,7 @@ def scrape_site(
     hrefs = _cache_get(list_cache_k, ttl=300) or []
     if not hrefs:
         hrefs = _with_retry(
-            lambda: _scrape_list(ctx.page, spec, limit),
+            lambda: _scrape_list(ctx, spec, limit),
             label=f"{spec.key}:list",
         ) or []
         if hrefs:
@@ -433,7 +517,7 @@ def scrape_site(
             break
         try:
             item = _with_retry(
-                lambda u=url: _scrape_article(ctx.page, spec, u),
+                lambda u=url: _scrape_article(ctx, spec, u),
                 label=f"{spec.key}:article",
                 attempts=2,
             )
