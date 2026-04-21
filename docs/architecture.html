@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture — indie-market-analyst</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('ima-docs-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+</head>
+<body>
+    <div class="layout-wrapper">
+        <aside id="sidebar" class="sidebar"></aside>
+        
+        <main class="main-content">
+            <header class="section">
+                <span class="section-label">System Design</span>
+                <h1 style="font-size: 4rem; margin-bottom: 2rem;">Architecture</h1>
+                <p style="font-size: 1.2rem; color: var(--text-muted); max-width: 800px;">
+                    Indie-market-analyst operates on two distinct planes: a cognitive engine managing agents and a deterministic engine providing precise data processing.
+                </p>
+            </header>
+
+            <section class="section">
+                <div style="background: var(--accent-soft); padding: 4rem; border: 1px solid var(--border); margin-bottom: 4rem;">
+                    <img src="assets/arch-diagram.svg" alt="Architecture Diagram" style="width: 100%; filter: grayscale(1) contrast(1.2);">
+                </div>
+            </section>
+
+            <section class="section">
+                <span class="section-label">01</span>
+                <h2>The Cognitive Engine</h2>
+                <div class="grid-asymmetric">
+                    <div style="grid-column: 1 / span 8;">
+                        <p style="color: var(--text-muted); line-height: 1.8;">
+                            Located in <code>indie_market_analyst/</code>, this layer is responsible for agent orchestration, tool selection, and memory management. It uses the OpenAI Agents SDK to manage swarms of specialized agents (collector, verifier, calculator) that communicate via strict Pydantic schemas.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <span class="section-label">02</span>
+                <h2>The Deterministic Engine</h2>
+                <div class="grid-asymmetric">
+                    <div style="grid-column: 5 / span 8;">
+                        <p style="color: var(--text-muted); line-height: 1.8;">
+                            Located in <code>backtest/</code>, this is pure Python (pandas/numpy). It never calls an LLM. It provides ground-truth calculations for technical indicators, portfolio metrics, and the Indian cost model. Agents call into this engine via tools, but the engine itself remains blissfully unaware of the AI layer.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <span class="section-label">Data Flow</span>
+                <div class="card">
+                    <ol style="margin-left: 1.5rem; line-height: 2;">
+                        <li>User sends a natural language query via SSE.</li>
+                        <li>Orchestrator identifies the intent and selects a <strong>Swarm Team</strong>.</li>
+                        <li>Agents within the team execute <strong>Tool Calls</strong> against the deterministic engine or public APIs.</li>
+                        <li>Results are verified for source and recency by a dedicated <strong>Verifier Agent</strong>.</li>
+                        <li>A final Pydantic-typed note is synthesized and streamed back to the UI.</li>
+                    </ol>
+                </div>
+            </section>
+
+            <footer style="margin-top: 10rem; border-top: 1px solid var(--border); padding-top: 2rem; color: var(--text-muted); font-size: 0.8rem;">
+                <p>MIT License &middot; Built by Dharun Ashok Kumar</p>
+            </footer>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

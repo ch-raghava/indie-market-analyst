@@ -1,65 +1,77 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Theme Toggle
+    // Navigation Definition
+    const navItems = [
+        { label: 'The Vision', path: 'index.html' },
+        { label: 'Quickstart', path: 'quickstart.html' },
+        { label: 'Architecture', path: 'architecture.html' },
+        { label: 'Swarm & Tools', path: 'swarm-and-tools.html' },
+        { label: 'Backtester', path: 'backtester.html' }
+    ];
+
+    const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+
+    // Inject Sidebar Content
+    const sidebar = document.querySelector('#sidebar');
+    if (sidebar) {
+        const navHtml = `
+            <div class="sidebar-content">
+                <a href="index.html" class="sidebar-logo">
+                    <img src="assets/logo.svg" alt="logo">
+                    <span>indie-market-analyst</span>
+                </a>
+                <ul class="nav-menu">
+                    ${navItems.map(item => `
+                        <li class="nav-item">
+                            <a href="${item.path}" class="nav-link ${currentPath === item.path ? 'active' : ''}">
+                                ${item.label}
+                            </a>
+                        </li>
+                    `).join('')}
+                    <li class="nav-item" style="margin-top: 2rem;">
+                        <a href="https://github.com/Dharuna457/indie-market-analyst" target="_blank" class="nav-link" style="font-style: normal; font-size: 0.9rem; opacity: 0.6;">
+                            GitHub ↗
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="sidebar-footer">
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                    <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                    <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                </button>
+            </div>
+        `;
+        sidebar.innerHTML = navHtml;
+    }
+
+    // Theme Toggle Logic
     const themeToggle = document.getElementById('theme-toggle');
-    const htmlElement = document.documentElement;
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('ima-docs-theme', newTheme);
+        });
+    }
 
-    const getTheme = () => {
-        return htmlElement.getAttribute('data-theme');
-    };
+    // Copy Code Buttons
+    document.querySelectorAll('pre').forEach(block => {
+        const button = document.createElement('button');
+        button.className = 'copy-btn';
+        button.innerText = 'Copy';
+        block.appendChild(button);
 
-    const setTheme = (theme) => {
-        htmlElement.setAttribute('data-theme', theme);
-        localStorage.setItem('ima-landing-theme', theme);
-    };
-
-    themeToggle.addEventListener('click', () => {
-        const currentTheme = getTheme();
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        setTheme(newTheme);
-    });
-
-    // Copy to Clipboard
-    const copyButtons = document.querySelectorAll('.copy-btn');
-
-    copyButtons.forEach(button => {
-        button.addEventListener('click', async () => {
-            const codeBlock = button.previousElementSibling.innerText;
-            try {
-                await navigator.clipboard.writeText(codeBlock);
-                const originalText = button.innerText;
-                button.innerText = 'Copied';
-                button.classList.add('copied');
-                
-                setTimeout(() => {
-                    button.innerText = originalText;
-                    button.classList.remove('copied');
-                }, 2000);
-            } catch (err) {
-                console.error('Failed to copy text: ', err);
-            }
+        button.addEventListener('click', () => {
+            const code = block.querySelector('code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                button.innerText = 'Copied!';
+                setTimeout(() => button.innerText = 'Copy', 2000);
+            });
         });
     });
 
-    // Smooth scroll for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href').slice(1);
-            const targetElement = document.getElementById(targetId);
-            
-            if (targetElement) {
-                const navHeight = document.querySelector('.nav-bar').offsetHeight;
-                const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - navHeight;
-                
-                window.scrollTo({
-                    top: targetPosition,
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
-
-    // Intersection Observer for scroll animations (optional subtle effect)
+    // Intersection Observer for scroll animations
     const observerOptions = {
         threshold: 0.1
     };
@@ -67,13 +79,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('fade-in');
-                observer.unobserve(entry.target);
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
             }
         });
     }, observerOptions);
 
-    document.querySelectorAll('.feature-card, .code-step').forEach(el => {
+    document.querySelectorAll('.section, .card').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'all 0.6s cubic-bezier(0.23, 1, 0.32, 1)';
         observer.observe(el);
     });
 });

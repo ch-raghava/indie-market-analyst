@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swarm & Tools — indie-market-analyst</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('ima-docs-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+</head>
+<body>
+    <div class="layout-wrapper">
+        <aside id="sidebar" class="sidebar"></aside>
+        
+        <main class="main-content">
+            <header class="section">
+                <span class="section-label">Extendability</span>
+                <h1 style="font-size: 4rem; margin-bottom: 2rem;">Swarm & Tools</h1>
+                <p style="font-size: 1.2rem; color: var(--text-muted); max-width: 800px;">
+                    Define teams as configuration and extend capabilities with a few lines of Python. No need to touch the core orchestration engine.
+                </p>
+            </header>
+
+            <section class="section">
+                <span class="section-label">Config</span>
+                <h2>Teams as YAML</h2>
+                <p style="margin-bottom: 1.5rem; color: var(--text-muted);">Located in <code>config/swarm/*.yaml</code>, you can declare specialized agents and their handoff logic.</p>
+                <pre><code>name: "equity_research"
+agents:
+  - name: "collector"
+    role: "Data Collector"
+    tools: ["yfinance_tool", "news_tool"]
+  - name: "verifier"
+    role: "Data Verifier"
+    handoff: "calculator"
+  - name: "calculator"
+    role: "Technical Calculator"</code></pre>
+            </section>
+
+            <section class="section">
+                <span class="section-label">Registry</span>
+                <h2>The Reflection Registry</h2>
+                <p style="margin-bottom: 1.5rem; color: var(--text-muted);">To add a new tool, simply drop a Python module into <code>indie_market_analyst/tools/</code>. The system automatically discovers it.</p>
+                <pre><code># indie_market_analyst/tools/custom_tool.py
+from typing import Annotated
+
+def fetch_alpha_signals(ticker: str) -> str:
+    """Fetches custom alpha signals for a given ticker."""
+    return f"Alpha signal for {ticker}: 0.85"
+
+TOOLS = [fetch_alpha_signals]</code></pre>
+            </section>
+
+            <section class="section">
+                <span class="section-label">Skills</span>
+                <h2>Ephemeral Skills</h2>
+                <p style="margin-bottom: 1.5rem; color: var(--text-muted);">Skills are specialized prompt fragments and tool allowlists stored in <code>skills/</code>. They give agents a temporal identity without hardcoding roles.</p>
+                <div class="card">
+                    <p>Check the <code>SKILL.md</code> in any skill folder to see how prompts are structured and what tools they are allowed to access.</p>
+                </div>
+            </section>
+
+            <footer style="margin-top: 10rem; border-top: 1px solid var(--border); padding-top: 2rem; color: var(--text-muted); font-size: 0.8rem;">
+                <p>MIT License &middot; Built by Dharun Ashok Kumar</p>
+            </footer>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,13 +1,13 @@
 # indie-market-analyst
 
-Open-source, tool-first, swarm-orchestrated AI research analyst for Indian markets (NSE/BSE).
-Free data sources, OpenRouter models, deterministic backtester.
+**The open-source, hallucination-resistant AI research analyst for Indian Stock Markets (NSE & BSE).**
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 [![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue.svg)](https://www.python.org/)
-[![CI](https://github.com/Dharuna457/indie-market-analyst/actions/workflows/ci.yml/badge.svg)](https://github.com/Dharuna457/indie-market-analyst/actions/workflows/ci.yml)
 
-> Landing page: [indiemarket.dharunashokkumar.com](https://indiemarket.dharunashokkumar.com)
+> **Live Documentation:** [indiemarket.dharunashokkumar.com](https://indiemarket.dharunashokkumar.com)
+
+indie-market-analyst is a tool-first, swarm-orchestrated intelligence engine designed to eliminate LLM hallucinations in financial research. It provides automated technical analysis, fundamental data collection, and a deterministic backtester specifically calibrated for the Indian market cost model (STT, GST, and brokerage).
 
 ---
 

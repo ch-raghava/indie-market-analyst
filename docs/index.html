@@ -3,198 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>indie-market-analyst — open-source AI research analyst for Indian stock markets (NSE/BSE)</title>
-    <meta name="description" content="An open-source, tool-first AI research analyst for Indian stock markets (NSE/BSE). Built on OpenAI Agents SDK, using free data sources and a deterministic backtester with the Indian cost model.">
+    <title>indie-market-analyst — Open-Source AI Research for Indian Stock Markets</title>
+    <meta name="description" content="A hallucination-resistant, swarm-orchestrated AI research analyst for NSE/BSE. Uses free data and a deterministic backtester with the Indian cost model.">
+    <meta name="keywords" content="Indian Stock Market AI, NSE BSE Research Analyst, Open Source Trading AI, Hallucination-resistant Finance LLM, Swarm Intelligence Trading, Quant Trading India, Automated Technical Analysis NSE, Free Financial Data AI">
     
-    <!-- Fonts -->
+    <!-- OpenGraph -->
+    <meta property="og:title" content="indie-market-analyst — Open-Source AI for NSE/BSE">
+    <meta property="og:description" content="Tool-first, swarm-orchestrated AI research analyst for Indian stock markets. Built for transparency and accuracy.">
+    <meta property="og:image" content="assets/og-banner.svg">
+    <meta property="og:url" content="https://indiemarket.dharunashokkumar.com">
+    <meta name="twitter:card" content="summary_large_image">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&display=swap" rel="stylesheet">
-    
-    <!-- CSS -->
     <link rel="stylesheet" href="styles.css">
-    
-    <!-- SEO / OG -->
-    <link rel="canonical" href="https://indiemarket.dharunashokkumar.com/">
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://indiemarket.dharunashokkumar.com/">
-    <meta property="og:title" content="indie-market-analyst — open-source AI research analyst for NSE/BSE">
-    <meta property="og:description" content="Tool-first, swarm-orchestrated AI research analyst for Indian stock markets. Built for transparency and free data access.">
-    <meta property="og:image" content="https://indiemarket.dharunashokkumar.com/assets/og-banner.svg">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="indie-market-analyst — AI research analyst for NSE/BSE">
-    <meta name="twitter:description" content="Tool-first, swarm-orchestrated AI research analyst for Indian stock markets. Built for transparency and free data access.">
-    <meta name="twitter:image" content="https://indiemarket.dharunashokkumar.com/assets/og-banner.svg">
-
-    <!-- Theme Boot Script -->
     <script>
         (function() {
-            const savedTheme = localStorage.getItem('ima-landing-theme');
+            const savedTheme = localStorage.getItem('ima-docs-theme');
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             const theme = savedTheme || (prefersDark ? 'dark' : 'light');
             document.documentElement.setAttribute('data-theme', theme);
         })();
     </script>
-
-    <!-- Schema.org JSON-LD -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "indie-market-analyst",
-      "applicationCategory": "FinanceApplication",
-      "operatingSystem": "Cross-platform",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      },
-      "author": {
-        "@type": "Person",
-        "name": "Dharun Ashok Kumar",
-        "url": "https://dharunashokkumar.com"
-      },
-      "license": "https://opensource.org/licenses/MIT",
-      "url": "https://indiemarket.dharunashokkumar.com",
-      "sameAs": "https://github.com/Dharuna457/indie-market-analyst"
-    }
-    </script>
 </head>
 <body>
-    <nav class="nav-bar">
-        <div class="nav-content">
-            <a href="/" class="nav-brand">
-                <img src="assets/logo.svg" alt="indie-market-analyst logo" class="nav-logo">
-                <span class="nav-wordmark">indie-market-analyst</span>
-            </a>
-            <div class="nav-links">
-                <a href="#features">Features</a>
-                <a href="#quickstart">Quickstart</a>
-                <a href="#architecture">Architecture</a>
-                <a href="https://github.com/Dharuna457/indie-market-analyst" target="_blank" rel="noopener">GitHub</a>
-                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
-                    <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-                    <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                </button>
-            </div>
-        </div>
-    </nav>
-
-    <main>
-        <section class="hero">
-            <div class="hero-content">
-                <h1 class="hero-title">The open-source AI research analyst for Indian markets.</h1>
-                <p class="hero-subtitle">Free data. Transparent reasoning. Swarm-orchestrated. Built on the OpenAI Agents SDK and OpenRouter.</p>
-                <div class="hero-ctas">
-                    <a href="#quickstart" class="btn btn-primary">Get started</a>
-                    <a href="https://github.com/Dharuna457/indie-market-analyst" class="btn btn-secondary" target="_blank" rel="noopener">Star on GitHub</a>
-                </div>
-                <div class="hero-mockup-wrapper">
-                    <img src="assets/hero-mockup.svg" alt="Chat UI Mockup" class="hero-mockup">
-                </div>
-            </div>
-        </section>
-
-        <section id="features" class="features">
-            <div class="section-container">
-                <h2 class="section-title">Engineered for depth.</h2>
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <h3>Swarm Orchestration</h3>
-                        <p>Teams as YAML; add a team without touching Python. Orchestrate complex research flows across multiple specialized agents.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3>Free Data Sources</h3>
-                        <p>Leverages yfinance, NSE/BSE public endpoints, and Google Finance scraping to ensure high-quality research without expensive API subscriptions.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3>Deterministic Backtester</h3>
-                        <p>Built with pandas and numpy, incorporating the Indian cost model including STT, stamp duty, brokerage, GST, and SEBI fees.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3>Tool-First Design</h3>
-                        <p>A reflection-based registry allows you to drop a Python module into the tools directory and have it instantly wired for agent use.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3>Transparent Reasoning</h3>
-                        <p>Every tool call is logged with its arguments, results, and execution duration in a collapsible drawer for full auditability.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3>Multi-Model</h3>
-                        <p>Powered by OpenRouter. Swap any agent's model role by simply editing a configuration file in config/models.yaml.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3>Extensible Skills</h3>
-                        <p>Define ephemeral prompt fragments with their own tool allowlists to give agents specialized context and capabilities.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3>SQLite Memory</h3>
-                        <p>Persists sessions, messages, and runs in a local SQLite database, powering a fully searchable chat history sidebar.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="quickstart" class="quickstart">
-            <div class="section-container">
-                <h2 class="section-title">Quickstart</h2>
-                <div class="code-step">
-                    <h4>1. Clone and install</h4>
-                    <div class="code-block-wrapper">
-                        <pre><code>git clone https://github.com/Dharuna457/indie-market-analyst.git
-cd indie-market-analyst
-uv sync
-cp .env.example .env   # add OPENROUTER_API_KEY</code></pre>
-                        <button class="copy-btn">Copy</button>
-                    </div>
-                </div>
-                <div class="code-step">
-                    <h4>2. Run the backend</h4>
-                    <div class="code-block-wrapper">
-                        <pre><code>uv run uvicorn indie_market_analyst.api_server:app --reload</code></pre>
-                        <button class="copy-btn">Copy</button>
-                    </div>
-                </div>
-                <div class="code-step">
-                    <h4>3. Run the frontend</h4>
-                    <div class="code-block-wrapper">
-                        <pre><code>cd frontend && npm install && npm run dev</code></pre>
-                        <button class="copy-btn">Copy</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="architecture" class="architecture">
-            <div class="section-container">
-                <h2 class="section-title">Architecture</h2>
-                <p class="arch-description">
-                    indie-market-analyst operates on two distinct planes: a cognitive engine managing agents, tools, and skills, and a deterministic engine providing precise backtesting and data processing.
+    <div class="layout-wrapper">
+        <aside id="sidebar" class="sidebar"></aside>
+        
+        <main class="main-content">
+            <header class="section">
+                <span class="section-label">Manifesto</span>
+                <h1 class="hero-text">
+                    The open-source <em>AI research analyst</em> for Indian markets.
+                </h1>
+                <p style="font-size: 1.5rem; max-width: 800px; color: var(--text-muted); margin-bottom: 3rem;">
+                    Free data. Transparent reasoning. Swarm-orchestrated. Built for those who refuse to trust black-box financial models.
                 </p>
-                <div class="arch-diagram-wrapper">
-                    <img src="assets/arch-diagram.svg" alt="Architecture Diagram" class="arch-diagram">
+                <div style="display: flex; gap: 2rem;">
+                    <a href="quickstart.html" style="font-family: var(--font-serif); font-size: 1.2rem; font-weight: 600;">Get Started &rarr;</a>
+                    <a href="https://github.com/Dharuna457/indie-market-analyst" target="_blank" style="font-family: var(--font-serif); font-size: 1.2rem; opacity: 0.6;">GitHub</a>
                 </div>
-                <div class="arch-footer">
-                    <a href="https://github.com/Dharuna457/indie-market-analyst/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener" class="arch-link">View Contributing Guidelines</a>
+            </header>
+
+            <section class="section">
+                <span class="section-label">The Problem</span>
+                <div class="grid-asymmetric">
+                    <div style="grid-column: 1 / span 8;">
+                        <h2 style="font-size: 2.5rem; margin-bottom: 2rem;">Most financial LLMs <em>hallucinate</em> closing prices.</h2>
+                        <p style="font-size: 1.1rem; color: var(--text-muted); line-height: 1.8;">
+                            Generic AI agents often prioritize fluency over factual accuracy. In the world of Indian stock markets (NSE/BSE), a hallucinated decimal point isn't just a typo—it's a liability. Indie-market-analyst inverts the default: an agent may only talk about numbers it pulled from a verified tool call on this turn.
+                        </p>
+                    </div>
                 </div>
-            </div>
-        </section>
-    </main>
+            </section>
 
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-left">
-                <span>MIT License &middot; built by Dharun Ashok Kumar</span>
-            </div>
-            <div class="footer-right">
-                <a href="https://github.com/Dharuna457/indie-market-analyst" target="_blank" rel="noopener">GitHub</a>
-                <a href="https://github.com/Dharuna457/indie-market-analyst/issues" target="_blank" rel="noopener">Issues</a>
-                <a href="https://github.com/Dharuna457/indie-market-analyst/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">Contributing</a>
-            </div>
-        </div>
-    </footer>
+            <section class="section">
+                <span class="section-label">The Approach</span>
+                <div class="grid-asymmetric">
+                    <div class="card" style="grid-column: 1 / span 4;">
+                        <h3 style="margin-bottom: 1rem;">Tool-First Design</h3>
+                        <p style="font-size: 0.9rem; color: var(--text-muted);">A reflection-based registry allows you to drop a Python module into the tools directory and have it instantly wired for agent use.</p>
+                    </div>
+                    <div class="card" style="grid-column: 5 / span 4;">
+                        <h3 style="margin-bottom: 1rem;">Swarm Orchestration</h3>
+                        <p style="font-size: 0.9rem; color: var(--text-muted);">Teams live as YAML; add a team without touching Python. Orchestrate complex research flows across multiple specialized agents.</p>
+                    </div>
+                    <div class="card" style="grid-column: 9 / span 4;">
+                        <h3 style="margin-bottom: 1rem;">Strict Handoffs</h3>
+                        <p style="font-size: 0.9rem; color: var(--text-muted);">Every handoff between agents carries a strict Pydantic schema, ensuring no data loss or corruption in the chain.</p>
+                    </div>
+                </div>
+            </section>
 
+            <section class="section">
+                <span class="section-label">Philosophy</span>
+                <blockquote style="font-family: var(--font-serif); font-style: italic; font-size: 2rem; border-left: 4px solid var(--accent); padding-left: 2rem; margin: 4rem 0;">
+                    "We don't need smarter models; we need better guardrails for the models we have."
+                </blockquote>
+            </section>
+
+            <footer style="margin-top: 10rem; border-top: 1px solid var(--border); padding-top: 2rem; color: var(--text-muted); font-size: 0.8rem;">
+                <p>MIT License &middot; Built by Dharun Ashok Kumar</p>
+            </footer>
+        </main>
+    </div>
     <script src="app.js"></script>
 </body>
 </html>
