@@ -36,39 +36,27 @@ export function ToolCallCard({ call }: { call: ToolCall }) {
 
   return (
     <div className={clsx("tool-card", running && "running")}>
-      <button
-        type="button"
+      <div
         className="tool-card-head"
         onClick={() => setOpen((v) => !v)}
       >
-        <span className="tool-card-caret">
-          {open ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
-        </span>
-        <span className="tool-card-name">{call.name || "tool"}</span>
-        <span className="tool-card-args">{formatArgs(call.arguments)}</span>
-        <span className="tool-card-dot" />
-        <span className="tool-card-duration">{duration}</span>
-      </button>
+        <span className="name">{call.name || "tool"}</span>
+        <span className="duration">{duration}</span>
+        <div className={clsx("status-dot", call.status)} />
+      </div>
       {open && (
         <div className="tool-card-body">
-          <div className="tool-card-field">
-            <div className="tool-card-field-label">Arguments</div>
-            <pre>{JSON.stringify(call.arguments, null, 2)}</pre>
+          <div className="args">
+            {JSON.stringify(call.arguments, null, 2)}
           </div>
-          <div className="tool-card-field">
-            <div className="tool-card-field-label">Result</div>
-            <pre>
-              {running
-                ? "running…"
-                : typeof call.result === "string"
-                ? call.result
-                : JSON.stringify(call.result, null, 2)}
-            </pre>
+          <div className="result">
+            {running
+              ? "running…"
+              : typeof call.result === "string"
+              ? call.result
+              : JSON.stringify(call.result, null, 2)}
           </div>
         </div>
-      )}
-      {!open && !running && (
-        <div className="tool-card-summary">→ {summarizeResult(call.result)}</div>
       )}
     </div>
   );

@@ -60,10 +60,10 @@ export function SessionList({ sessions, activeId, onSelect, onDelete, loading }:
                 if (e.key === "Enter") onSelect(s.id);
               }}
             >
-              <div className="session-title">{s.title}</div>
+              <div className="title">{s.title}</div>
               <button
                 type="button"
-                className="session-delete"
+                className="delete"
                 aria-label="Delete chat"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -72,7 +72,7 @@ export function SessionList({ sessions, activeId, onSelect, onDelete, loading }:
                   }
                 }}
               >
-                <Trash2 size={14} />
+                <Trash2 size={13} />
               </button>
             </div>
           ))}

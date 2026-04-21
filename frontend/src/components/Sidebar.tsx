@@ -69,7 +69,10 @@ export function Sidebar({
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
-        <div className="brand">indie-market-analyst</div>
+        <div className="brand">
+          <div className="brand-dot" />
+          indie-market-analyst
+        </div>
         <button
           type="button"
           className="new-chat-btn"
@@ -79,15 +82,14 @@ export function Sidebar({
           }}
         >
           <Plus size={14} />
-          New chat
+          New
         </button>
       </div>
 
       <div className="sidebar-search">
-        <Search size={14} />
         <input
           type="text"
-          placeholder="Search chats"
+          placeholder="Search history…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
@@ -101,17 +103,9 @@ export function Sidebar({
         loading={loading}
       />
 
-      <nav className="sidebar-nav">
-        <NavLink to="/chat" className={({ isActive }) => (isActive ? "active" : "")}>
-          Chat
-        </NavLink>
-        <NavLink to="/runs" className={({ isActive }) => (isActive ? "active" : "")}>
-          Runs
-        </NavLink>
-      </nav>
-
       <div className="sidebar-footer">
         <ThemeToggle />
+        <div className="version">v0.1.0</div>
       </div>
     </aside>
   );

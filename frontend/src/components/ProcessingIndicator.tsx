@@ -8,8 +8,8 @@ export function ProcessingIndicator({
   if (!streaming) return null;
   return (
     <div className="processing">
-      <span className="processing-dot" />
-      <span className="processing-text">
+      <div className="live-dot" />
+      <span>
         {activeTool ? `Running ${activeTool}…` : "Thinking…"}
       </span>
     </div>

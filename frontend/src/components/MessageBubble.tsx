@@ -17,6 +17,7 @@ export function MessageBubble({ message, streaming, activeTool }: Props) {
 
   return (
     <div className={clsx("message", message.role)}>
+      <div className="role-tag">{message.role}</div>
       {isAssistant && (
         <ThinkingDrawer
           message={message}

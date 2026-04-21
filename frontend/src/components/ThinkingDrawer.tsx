@@ -33,30 +33,25 @@ export function ThinkingDrawer({
       : null;
 
   return (
-    <div className={clsx("thinking", streaming && "streaming")}>
-      <button
-        type="button"
+    <div className={clsx("thinking", open && "open", streaming && "streaming")}>
+      <div
         className="thinking-summary"
         onClick={() => setOpen((v) => !v)}
       >
-        <span className="thinking-icon">
-          <Brain size={14} />
+        <div className="chev">
+          <ChevronRight size={14} />
+        </div>
+        {streaming && <div className="live-dot" />}
+        <span className="label">
+          {streaming
+            ? activeTool
+              ? `Running ${activeTool}…`
+              : "Thinking…"
+            : `Reasoning (${toolCount} tool${toolCount === 1 ? "" : "s"}${
+                durationLabel ? ` · ${durationLabel}` : ""
+              })`}
         </span>
-        {streaming ? (
-          <span className="thinking-label">
-            Thinking{activeTool ? ` · running ${activeTool}` : "…"}
-          </span>
-        ) : (
-          <span className="thinking-label">
-            Reasoning
-            {toolCount > 0 && ` · ${toolCount} tool${toolCount === 1 ? "" : "s"}`}
-            {durationLabel && ` · ${durationLabel}`}
-          </span>
-        )}
-        <span className="thinking-caret">
-          {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-        </span>
-      </button>
+      </div>
 
       {open && (
         <div className="thinking-body">
@@ -64,7 +59,7 @@ export function ThinkingDrawer({
             <div className="handoff-line">
               {handoffs.map((h, i) => (
                 <span key={i} className="handoff-pill">
-                  → {h}
+                  {h}
                 </span>
               ))}
             </div>

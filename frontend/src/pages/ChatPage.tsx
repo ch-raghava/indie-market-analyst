@@ -134,39 +134,41 @@ export function ChatPage() {
       </div>
 
       <div className="composer-area">
-        <ProcessingIndicator streaming={streaming} activeTool={activeTool} />
-        <form
-          className="composer"
-          onSubmit={(e) => {
-            e.preventDefault();
-            send();
-          }}
-        >
-          <textarea
-            ref={textareaRef}
-            placeholder="Ask about a stock, setup, or request an EOD report…"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                send();
-              }
+        <div className="composer-wrapper">
+          <ProcessingIndicator streaming={streaming} activeTool={activeTool} />
+          <form
+            className="composer"
+            onSubmit={(e) => {
+              e.preventDefault();
+              send();
             }}
-            rows={1}
-            disabled={streaming}
-          />
-          <button
-            type="submit"
-            className="send"
-            disabled={streaming || !input.trim()}
-            aria-label="Send"
           >
-            <ArrowUp size={16} />
-          </button>
-        </form>
-        <div className="composer-hint">
-          Research only. Not investment advice. Free-tier OpenRouter models by default.
+            <textarea
+              ref={textareaRef}
+              placeholder="Ask about a stock, setup, or request an EOD report…"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  send();
+                }
+              }}
+              rows={1}
+              disabled={streaming}
+            />
+            <button
+              type="submit"
+              className="send"
+              disabled={streaming || !input.trim()}
+              aria-label="Send"
+            >
+              <ArrowUp size={20} />
+            </button>
+          </form>
+          <div className="composer-hint">
+            Research only. Not investment advice. Free-tier OpenRouter models by default.
+          </div>
         </div>
       </div>
     </div>

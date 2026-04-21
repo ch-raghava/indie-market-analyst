@@ -67,7 +67,7 @@ Two independent planes:
 
 Typical flow:
 
-```
+```text
 user → FastAPI /chat/stream (SSE)
      → orchestrator.run_turn
      → router picks a team
@@ -83,7 +83,7 @@ See `CLAUDE.md` for the architectural deep-dive and `CONTRIBUTING.md` for setup.
 
 ## Layout
 
-```
+```text
 indie_market_analyst/
   agent/  core/  memory/  session/  providers/
   tools/  skills/  swarm/  guardrails/
